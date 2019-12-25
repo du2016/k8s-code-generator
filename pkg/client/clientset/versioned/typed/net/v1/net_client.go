@@ -19,27 +19,27 @@ limitations under the License.
 package v1
 
 import (
-	v1 "github.com/du2016/code-generator/pkg/apis/ip/v1"
+	v1 "github.com/du2016/code-generator/pkg/apis/net/v1"
 	"github.com/du2016/code-generator/pkg/client/clientset/versioned/scheme"
 	rest "k8s.io/client-go/rest"
 )
 
-type IpV1Interface interface {
+type NetV1Interface interface {
 	RESTClient() rest.Interface
-	IpsGetter
+	NetsGetter
 }
 
-// IpV1Client is used to interact with features provided by the ip.rocdu.top group.
-type IpV1Client struct {
+// NetV1Client is used to interact with features provided by the net.rocdu.top group.
+type NetV1Client struct {
 	restClient rest.Interface
 }
 
-func (c *IpV1Client) Ips(namespace string) IpInterface {
-	return newIps(c, namespace)
+func (c *NetV1Client) Nets(namespace string) NetInterface {
+	return newNets(c, namespace)
 }
 
-// NewForConfig creates a new IpV1Client for the given config.
-func NewForConfig(c *rest.Config) (*IpV1Client, error) {
+// NewForConfig creates a new NetV1Client for the given config.
+func NewForConfig(c *rest.Config) (*NetV1Client, error) {
 	config := *c
 	if err := setConfigDefaults(&config); err != nil {
 		return nil, err
@@ -48,12 +48,12 @@ func NewForConfig(c *rest.Config) (*IpV1Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &IpV1Client{client}, nil
+	return &NetV1Client{client}, nil
 }
 
-// NewForConfigOrDie creates a new IpV1Client for the given config and
+// NewForConfigOrDie creates a new NetV1Client for the given config and
 // panics if there is an error in the config.
-func NewForConfigOrDie(c *rest.Config) *IpV1Client {
+func NewForConfigOrDie(c *rest.Config) *NetV1Client {
 	client, err := NewForConfig(c)
 	if err != nil {
 		panic(err)
@@ -61,9 +61,9 @@ func NewForConfigOrDie(c *rest.Config) *IpV1Client {
 	return client
 }
 
-// New creates a new IpV1Client for the given RESTClient.
-func New(c rest.Interface) *IpV1Client {
-	return &IpV1Client{c}
+// New creates a new NetV1Client for the given RESTClient.
+func New(c rest.Interface) *NetV1Client {
+	return &NetV1Client{c}
 }
 
 func setConfigDefaults(config *rest.Config) error {
@@ -81,7 +81,7 @@ func setConfigDefaults(config *rest.Config) error {
 
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
-func (c *IpV1Client) RESTClient() rest.Interface {
+func (c *NetV1Client) RESTClient() rest.Interface {
 	if c == nil {
 		return nil
 	}

@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	config, err := clientcmd.BuildConfigFromFlags("", "/Users/tianpeng.du/kubeconfig")
+	config, err := clientcmd.BuildConfigFromFlags("", "/Users/tianpeng.du/.kube/config")
 	if err != nil {
 		log.Println(err)
 		return
@@ -32,7 +32,7 @@ func main() {
 	go informer.Start(nil)
 	//time.Sleep(10*time.Second)
 
-	IpCrdInformer:=informer.Rocdu().V1().Ips()
+	IpCrdInformer:=informer.Ip().V1().Ips()
 	cache.WaitForCacheSync(nil,IpCrdInformer.Informer().HasSynced)
 
 	for {

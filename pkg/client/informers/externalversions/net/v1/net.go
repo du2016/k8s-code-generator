@@ -21,69 +21,69 @@ package v1
 import (
 	time "time"
 
-	ipv1 "github.com/du2016/code-generator/pkg/apis/ip/v1"
+	netv1 "github.com/du2016/code-generator/pkg/apis/net/v1"
 	versioned "github.com/du2016/code-generator/pkg/client/clientset/versioned"
 	internalinterfaces "github.com/du2016/code-generator/pkg/client/informers/externalversions/internalinterfaces"
-	v1 "github.com/du2016/code-generator/pkg/client/listers/ip/v1"
+	v1 "github.com/du2016/code-generator/pkg/client/listers/net/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"
 	cache "k8s.io/client-go/tools/cache"
 )
 
-// IpInformer provides access to a shared informer and lister for
-// Ips.
-type IpInformer interface {
+// NetInformer provides access to a shared informer and lister for
+// Nets.
+type NetInformer interface {
 	Informer() cache.SharedIndexInformer
-	Lister() v1.IpLister
+	Lister() v1.NetLister
 }
 
-type ipInformer struct {
+type netInformer struct {
 	factory          internalinterfaces.SharedInformerFactory
 	tweakListOptions internalinterfaces.TweakListOptionsFunc
 	namespace        string
 }
 
-// NewIpInformer constructs a new informer for Ip type.
+// NewNetInformer constructs a new informer for Net type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewIpInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
-	return NewFilteredIpInformer(client, namespace, resyncPeriod, indexers, nil)
+func NewNetInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers) cache.SharedIndexInformer {
+	return NewFilteredNetInformer(client, namespace, resyncPeriod, indexers, nil)
 }
 
-// NewFilteredIpInformer constructs a new informer for Ip type.
+// NewFilteredNetInformer constructs a new informer for Net type.
 // Always prefer using an informer factory to get a shared informer instead of getting an independent
 // one. This reduces memory footprint and number of connections to the server.
-func NewFilteredIpInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
+func NewFilteredNetInformer(client versioned.Interface, namespace string, resyncPeriod time.Duration, indexers cache.Indexers, tweakListOptions internalinterfaces.TweakListOptionsFunc) cache.SharedIndexInformer {
 	return cache.NewSharedIndexInformer(
 		&cache.ListWatch{
 			ListFunc: func(options metav1.ListOptions) (runtime.Object, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.IpV1().Ips(namespace).List(options)
+				return client.NetV1().Nets(namespace).List(options)
 			},
 			WatchFunc: func(options metav1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.IpV1().Ips(namespace).Watch(options)
+				return client.NetV1().Nets(namespace).Watch(options)
 			},
 		},
-		&ipv1.Ip{},
+		&netv1.Net{},
 		resyncPeriod,
 		indexers,
 	)
 }
 
-func (f *ipInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
-	return NewFilteredIpInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
+func (f *netInformer) defaultInformer(client versioned.Interface, resyncPeriod time.Duration) cache.SharedIndexInformer {
+	return NewFilteredNetInformer(client, f.namespace, resyncPeriod, cache.Indexers{cache.NamespaceIndex: cache.MetaNamespaceIndexFunc}, f.tweakListOptions)
 }
 
-func (f *ipInformer) Informer() cache.SharedIndexInformer {
-	return f.factory.InformerFor(&ipv1.Ip{}, f.defaultInformer)
+func (f *netInformer) Informer() cache.SharedIndexInformer {
+	return f.factory.InformerFor(&netv1.Net{}, f.defaultInformer)
 }
 
-func (f *ipInformer) Lister() v1.IpLister {
-	return v1.NewIpLister(f.Informer().GetIndexer())
+func (f *netInformer) Lister() v1.NetLister {
+	return v1.NewNetLister(f.Informer().GetIndexer())
 }

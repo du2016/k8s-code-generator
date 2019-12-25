@@ -19,22 +19,22 @@ limitations under the License.
 package fake
 
 import (
-	v1 "github.com/du2016/code-generator/pkg/client/clientset/versioned/typed/ip/v1"
+	v1 "github.com/du2016/code-generator/pkg/client/clientset/versioned/typed/net/v1"
 	rest "k8s.io/client-go/rest"
 	testing "k8s.io/client-go/testing"
 )
 
-type FakeIpV1 struct {
+type FakeNetV1 struct {
 	*testing.Fake
 }
 
-func (c *FakeIpV1) Ips(namespace string) v1.IpInterface {
-	return &FakeIps{c, namespace}
+func (c *FakeNetV1) Nets(namespace string) v1.NetInterface {
+	return &FakeNets{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
-func (c *FakeIpV1) RESTClient() rest.Interface {
+func (c *FakeNetV1) RESTClient() rest.Interface {
 	var ret *rest.RESTClient
 	return ret
 }

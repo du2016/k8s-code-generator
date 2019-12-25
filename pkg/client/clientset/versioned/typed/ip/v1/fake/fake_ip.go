@@ -30,13 +30,13 @@ import (
 
 // FakeIps implements IpInterface
 type FakeIps struct {
-	Fake *FakeRocduV1
+	Fake *FakeIpV1
 	ns   string
 }
 
-var ipsResource = schema.GroupVersionResource{Group: "rocdu.top", Version: "v1", Resource: "ips"}
+var ipsResource = schema.GroupVersionResource{Group: "ip.rocdu.top", Version: "v1", Resource: "ips"}
 
-var ipsKind = schema.GroupVersionKind{Group: "rocdu.top", Version: "v1", Kind: "Ip"}
+var ipsKind = schema.GroupVersionKind{Group: "ip.rocdu.top", Version: "v1", Kind: "Ip"}
 
 // Get takes name of the ip, and returns the corresponding ip object, and an error if there is any.
 func (c *FakeIps) Get(name string, options v1.GetOptions) (result *ipv1.Ip, err error) {

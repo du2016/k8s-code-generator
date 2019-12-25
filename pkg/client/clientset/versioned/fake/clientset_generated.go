@@ -20,8 +20,10 @@ package fake
 
 import (
 	clientset "github.com/du2016/code-generator/pkg/client/clientset/versioned"
-	rocduv1 "github.com/du2016/code-generator/pkg/client/clientset/versioned/typed/ip/v1"
-	fakerocduv1 "github.com/du2016/code-generator/pkg/client/clientset/versioned/typed/ip/v1/fake"
+	ipv1 "github.com/du2016/code-generator/pkg/client/clientset/versioned/typed/ip/v1"
+	fakeipv1 "github.com/du2016/code-generator/pkg/client/clientset/versioned/typed/ip/v1/fake"
+	netv1 "github.com/du2016/code-generator/pkg/client/clientset/versioned/typed/net/v1"
+	fakenetv1 "github.com/du2016/code-generator/pkg/client/clientset/versioned/typed/net/v1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"
@@ -76,7 +78,12 @@ func (c *Clientset) Tracker() testing.ObjectTracker {
 
 var _ clientset.Interface = &Clientset{}
 
-// RocduV1 retrieves the RocduV1Client
-func (c *Clientset) RocduV1() rocduv1.RocduV1Interface {
-	return &fakerocduv1.FakeRocduV1{Fake: &c.Fake}
+// IpV1 retrieves the IpV1Client
+func (c *Clientset) IpV1() ipv1.IpV1Interface {
+	return &fakeipv1.FakeIpV1{Fake: &c.Fake}
+}
+
+// NetV1 retrieves the NetV1Client
+func (c *Clientset) NetV1() netv1.NetV1Interface {
+	return &fakenetv1.FakeNetV1{Fake: &c.Fake}
 }

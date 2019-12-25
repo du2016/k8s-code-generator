@@ -21,7 +21,7 @@ package v1
 import (
 	"time"
 
-	v1 "github.com/du2016/code-generator/pkg/apis/ip/v1"
+	v1 "github.com/du2016/code-generator/pkg/apis/net/v1"
 	scheme "github.com/du2016/code-generator/pkg/client/clientset/versioned/scheme"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -29,45 +29,45 @@ import (
 	rest "k8s.io/client-go/rest"
 )
 
-// IpsGetter has a method to return a IpInterface.
+// NetsGetter has a method to return a NetInterface.
 // A group's client should implement this interface.
-type IpsGetter interface {
-	Ips(namespace string) IpInterface
+type NetsGetter interface {
+	Nets(namespace string) NetInterface
 }
 
-// IpInterface has methods to work with Ip resources.
-type IpInterface interface {
-	Create(*v1.Ip) (*v1.Ip, error)
-	Update(*v1.Ip) (*v1.Ip, error)
+// NetInterface has methods to work with Net resources.
+type NetInterface interface {
+	Create(*v1.Net) (*v1.Net, error)
+	Update(*v1.Net) (*v1.Net, error)
 	Delete(name string, options *metav1.DeleteOptions) error
 	DeleteCollection(options *metav1.DeleteOptions, listOptions metav1.ListOptions) error
-	Get(name string, options metav1.GetOptions) (*v1.Ip, error)
-	List(opts metav1.ListOptions) (*v1.IpList, error)
+	Get(name string, options metav1.GetOptions) (*v1.Net, error)
+	List(opts metav1.ListOptions) (*v1.NetList, error)
 	Watch(opts metav1.ListOptions) (watch.Interface, error)
-	Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.Ip, err error)
-	IpExpansion
+	Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.Net, err error)
+	NetExpansion
 }
 
-// ips implements IpInterface
-type ips struct {
+// nets implements NetInterface
+type nets struct {
 	client rest.Interface
 	ns     string
 }
 
-// newIps returns a Ips
-func newIps(c *IpV1Client, namespace string) *ips {
-	return &ips{
+// newNets returns a Nets
+func newNets(c *NetV1Client, namespace string) *nets {
+	return &nets{
 		client: c.RESTClient(),
 		ns:     namespace,
 	}
 }
 
-// Get takes name of the ip, and returns the corresponding ip object, and an error if there is any.
-func (c *ips) Get(name string, options metav1.GetOptions) (result *v1.Ip, err error) {
-	result = &v1.Ip{}
+// Get takes name of the net, and returns the corresponding net object, and an error if there is any.
+func (c *nets) Get(name string, options metav1.GetOptions) (result *v1.Net, err error) {
+	result = &v1.Net{}
 	err = c.client.Get().
 		Namespace(c.ns).
-		Resource("ips").
+		Resource("nets").
 		Name(name).
 		VersionedParams(&options, scheme.ParameterCodec).
 		Do().
@@ -75,16 +75,16 @@ func (c *ips) Get(name string, options metav1.GetOptions) (result *v1.Ip, err er
 	return
 }
 
-// List takes label and field selectors, and returns the list of Ips that match those selectors.
-func (c *ips) List(opts metav1.ListOptions) (result *v1.IpList, err error) {
+// List takes label and field selectors, and returns the list of Nets that match those selectors.
+func (c *nets) List(opts metav1.ListOptions) (result *v1.NetList, err error) {
 	var timeout time.Duration
 	if opts.TimeoutSeconds != nil {
 		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
 	}
-	result = &v1.IpList{}
+	result = &v1.NetList{}
 	err = c.client.Get().
 		Namespace(c.ns).
-		Resource("ips").
+		Resource("nets").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
 		Do().
@@ -92,8 +92,8 @@ func (c *ips) List(opts metav1.ListOptions) (result *v1.IpList, err error) {
 	return
 }
 
-// Watch returns a watch.Interface that watches the requested ips.
-func (c *ips) Watch(opts metav1.ListOptions) (watch.Interface, error) {
+// Watch returns a watch.Interface that watches the requested nets.
+func (c *nets) Watch(opts metav1.ListOptions) (watch.Interface, error) {
 	var timeout time.Duration
 	if opts.TimeoutSeconds != nil {
 		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
@@ -101,42 +101,42 @@ func (c *ips) Watch(opts metav1.ListOptions) (watch.Interface, error) {
 	opts.Watch = true
 	return c.client.Get().
 		Namespace(c.ns).
-		Resource("ips").
+		Resource("nets").
 		VersionedParams(&opts, scheme.ParameterCodec).
 		Timeout(timeout).
 		Watch()
 }
 
-// Create takes the representation of a ip and creates it.  Returns the server's representation of the ip, and an error, if there is any.
-func (c *ips) Create(ip *v1.Ip) (result *v1.Ip, err error) {
-	result = &v1.Ip{}
+// Create takes the representation of a net and creates it.  Returns the server's representation of the net, and an error, if there is any.
+func (c *nets) Create(net *v1.Net) (result *v1.Net, err error) {
+	result = &v1.Net{}
 	err = c.client.Post().
 		Namespace(c.ns).
-		Resource("ips").
-		Body(ip).
+		Resource("nets").
+		Body(net).
 		Do().
 		Into(result)
 	return
 }
 
-// Update takes the representation of a ip and updates it. Returns the server's representation of the ip, and an error, if there is any.
-func (c *ips) Update(ip *v1.Ip) (result *v1.Ip, err error) {
-	result = &v1.Ip{}
+// Update takes the representation of a net and updates it. Returns the server's representation of the net, and an error, if there is any.
+func (c *nets) Update(net *v1.Net) (result *v1.Net, err error) {
+	result = &v1.Net{}
 	err = c.client.Put().
 		Namespace(c.ns).
-		Resource("ips").
-		Name(ip.Name).
-		Body(ip).
+		Resource("nets").
+		Name(net.Name).
+		Body(net).
 		Do().
 		Into(result)
 	return
 }
 
-// Delete takes name of the ip and deletes it. Returns an error if one occurs.
-func (c *ips) Delete(name string, options *metav1.DeleteOptions) error {
+// Delete takes name of the net and deletes it. Returns an error if one occurs.
+func (c *nets) Delete(name string, options *metav1.DeleteOptions) error {
 	return c.client.Delete().
 		Namespace(c.ns).
-		Resource("ips").
+		Resource("nets").
 		Name(name).
 		Body(options).
 		Do().
@@ -144,14 +144,14 @@ func (c *ips) Delete(name string, options *metav1.DeleteOptions) error {
 }
 
 // DeleteCollection deletes a collection of objects.
-func (c *ips) DeleteCollection(options *metav1.DeleteOptions, listOptions metav1.ListOptions) error {
+func (c *nets) DeleteCollection(options *metav1.DeleteOptions, listOptions metav1.ListOptions) error {
 	var timeout time.Duration
 	if listOptions.TimeoutSeconds != nil {
 		timeout = time.Duration(*listOptions.TimeoutSeconds) * time.Second
 	}
 	return c.client.Delete().
 		Namespace(c.ns).
-		Resource("ips").
+		Resource("nets").
 		VersionedParams(&listOptions, scheme.ParameterCodec).
 		Timeout(timeout).
 		Body(options).
@@ -159,12 +159,12 @@ func (c *ips) DeleteCollection(options *metav1.DeleteOptions, listOptions metav1
 		Error()
 }
 
-// Patch applies the patch and returns the patched ip.
-func (c *ips) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.Ip, err error) {
-	result = &v1.Ip{}
+// Patch applies the patch and returns the patched net.
+func (c *nets) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.Net, err error) {
+	result = &v1.Net{}
 	err = c.client.Patch(pt).
 		Namespace(c.ns).
-		Resource("ips").
+		Resource("nets").
 		SubResource(subresources...).
 		Name(name).
 		Body(data).

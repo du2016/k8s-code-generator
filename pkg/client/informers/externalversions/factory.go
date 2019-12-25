@@ -26,6 +26,7 @@ import (
 	versioned "github.com/du2016/code-generator/pkg/client/clientset/versioned"
 	internalinterfaces "github.com/du2016/code-generator/pkg/client/informers/externalversions/internalinterfaces"
 	ip "github.com/du2016/code-generator/pkg/client/informers/externalversions/ip"
+	net "github.com/du2016/code-generator/pkg/client/informers/externalversions/net"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
@@ -172,9 +173,14 @@ type SharedInformerFactory interface {
 	ForResource(resource schema.GroupVersionResource) (GenericInformer, error)
 	WaitForCacheSync(stopCh <-chan struct{}) map[reflect.Type]bool
 
-	Rocdu() ip.Interface
+	Ip() ip.Interface
+	Net() net.Interface
 }
 
-func (f *sharedInformerFactory) Rocdu() ip.Interface {
+func (f *sharedInformerFactory) Ip() ip.Interface {
 	return ip.New(f, f.namespace, f.tweakListOptions)
+}
+
+func (f *sharedInformerFactory) Net() net.Interface {
+	return net.New(f, f.namespace, f.tweakListOptions)
 }

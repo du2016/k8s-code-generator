@@ -22,6 +22,7 @@ import (
 	"fmt"
 
 	v1 "github.com/du2016/code-generator/pkg/apis/ip/v1"
+	netv1 "github.com/du2016/code-generator/pkg/apis/net/v1"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
 )
@@ -52,9 +53,13 @@ func (f *genericInformer) Lister() cache.GenericLister {
 // TODO extend this to unknown resources with a client pool
 func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource) (GenericInformer, error) {
 	switch resource {
-	// Group=rocdu.top, Version=v1
+	// Group=ip.rocdu.top, Version=v1
 	case v1.SchemeGroupVersion.WithResource("ips"):
-		return &genericInformer{resource: resource.GroupResource(), informer: f.Rocdu().V1().Ips().Informer()}, nil
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Ip().V1().Ips().Informer()}, nil
+
+		// Group=net.rocdu.top, Version=v1
+	case netv1.SchemeGroupVersion.WithResource("nets"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Net().V1().Nets().Informer()}, nil
 
 	}
 

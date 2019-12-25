@@ -21,7 +21,8 @@ package versioned
 import (
 	"fmt"
 
-	rocduv1 "github.com/du2016/code-generator/pkg/client/clientset/versioned/typed/ip/v1"
+	ipv1 "github.com/du2016/code-generator/pkg/client/clientset/versioned/typed/ip/v1"
+	netv1 "github.com/du2016/code-generator/pkg/client/clientset/versioned/typed/net/v1"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"
@@ -29,19 +30,26 @@ import (
 
 type Interface interface {
 	Discovery() discovery.DiscoveryInterface
-	RocduV1() rocduv1.RocduV1Interface
+	IpV1() ipv1.IpV1Interface
+	NetV1() netv1.NetV1Interface
 }
 
 // Clientset contains the clients for groups. Each group has exactly one
 // version included in a Clientset.
 type Clientset struct {
 	*discovery.DiscoveryClient
-	rocduV1 *rocduv1.RocduV1Client
+	ipV1  *ipv1.IpV1Client
+	netV1 *netv1.NetV1Client
 }
 
-// RocduV1 retrieves the RocduV1Client
-func (c *Clientset) RocduV1() rocduv1.RocduV1Interface {
-	return c.rocduV1
+// IpV1 retrieves the IpV1Client
+func (c *Clientset) IpV1() ipv1.IpV1Interface {
+	return c.ipV1
+}
+
+// NetV1 retrieves the NetV1Client
+func (c *Clientset) NetV1() netv1.NetV1Interface {
+	return c.netV1
 }
 
 // Discovery retrieves the DiscoveryClient
@@ -65,7 +73,11 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 	}
 	var cs Clientset
 	var err error
-	cs.rocduV1, err = rocduv1.NewForConfig(&configShallowCopy)
+	cs.ipV1, err = ipv1.NewForConfig(&configShallowCopy)
+	if err != nil {
+		return nil, err
+	}
+	cs.netV1, err = netv1.NewForConfig(&configShallowCopy)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +93,8 @@ func NewForConfig(c *rest.Config) (*Clientset, error) {
 // panics if there is an error in the config.
 func NewForConfigOrDie(c *rest.Config) *Clientset {
 	var cs Clientset
-	cs.rocduV1 = rocduv1.NewForConfigOrDie(c)
+	cs.ipV1 = ipv1.NewForConfigOrDie(c)
+	cs.netV1 = netv1.NewForConfigOrDie(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClientForConfigOrDie(c)
 	return &cs
@@ -90,7 +103,8 @@ func NewForConfigOrDie(c *rest.Config) *Clientset {
 // New creates a new Clientset for the given RESTClient.
 func New(c rest.Interface) *Clientset {
 	var cs Clientset
-	cs.rocduV1 = rocduv1.New(c)
+	cs.ipV1 = ipv1.New(c)
+	cs.netV1 = netv1.New(c)
 
 	cs.DiscoveryClient = discovery.NewDiscoveryClient(c)
 	return &cs
