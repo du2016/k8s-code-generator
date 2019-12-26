@@ -15,8 +15,8 @@ import (
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/tools/cache"
-	"k8s.io/client-go/util/workqueue"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/util/workqueue"
 	"log"
 	"time"
 )
@@ -49,8 +49,8 @@ func main() {
 	//	}
 	//	time.Sleep(1*time.Second)
 	//}
-	ipc:=IPcontroller{}
-	watchList:=cache.NewListWatchFromClient(clientset.IpV1().RESTClient(),"ips",v1.NamespaceAll,fields.Everything())
+	ipc := IPcontroller{}
+	watchList := cache.NewListWatchFromClient(clientset.IpV1().RESTClient(), "ips", v1.NamespaceAll, fields.Everything())
 	ipStore, ipController := cache.NewInformer(
 		watchList,
 		&v1.Pod{},
@@ -60,12 +60,12 @@ func main() {
 			UpdateFunc: ipc.updatePod,
 		},
 	)
-	ipc=IPcontroller{
-		Store:ipStore,
-		Controller:ipController,
-		Queue:workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "ips"),
+	ipc = IPcontroller{
+		Store:      ipStore,
+		Controller: ipController,
+		Queue:      workqueue.NewNamedRateLimitingQueue(workqueue.DefaultControllerRateLimiter(), "ips"),
 	}
-	cache.WaitForCacheSync(nil,ipc.Controller.HasSynced)
+	cache.WaitForCacheSync(nil, ipc.Controller.HasSynced)
 
 	var stopCh <-chan struct{}
 	for i := 0; i < 10; i++ {
@@ -78,28 +78,29 @@ func main() {
 }
 
 type IPcontroller struct {
-	Store cache.Store
+	Store      cache.Store
 	Controller cache.Controller
-	Queue workqueue.RateLimitingInterface
+	Queue      workqueue.RateLimitingInterface
 }
+
 func (self *IPcontroller) enqueueIp(obj interface{}) {
 	log.Println(obj.(ip_v1.Ip))
 	self.Queue.Add(obj)
 }
 
-func (self *IPcontroller) updatePod(obj interface{},new interface{})  {
-	log.Println(obj.(ip_v1.Ip),new)
+func (self *IPcontroller) updatePod(obj interface{}, new interface{}) {
+	log.Println(obj.(ip_v1.Ip), new)
 	self.enqueueIp(new)
 }
 
 func (self *IPcontroller) worker() {
-	workFunc:= func() bool {
-		key,quit:=self.Queue.Get()
+	workFunc := func() bool {
+		key, quit := self.Queue.Get()
 		if quit {
 			return true
 		}
 		self.Store.Resync()
-		obj, exists, err :=self.Store.GetByKey(key.(string))
+		obj, exists, err := self.Store.GetByKey(key.(string))
 		if !exists {
 			fmt.Printf("Pod has been deleted %v\n", key)
 			return false
