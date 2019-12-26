@@ -14,9 +14,10 @@ require (
 	golang.org/x/tools v0.0.0-20191223235410-3721262b3e7c // indirect
 	gonum.org/v1/gonum v0.6.1 // indirect
 	gopkg.in/yaml.v2 v2.2.7 // indirect
+	k8s.io/api v0.17.0
 	k8s.io/apimachinery v0.17.0
 	k8s.io/client-go v0.17.0
-	k8s.io/code-generator v0.17.1-beta.0
+	k8s.io/code-generator v0.17.1-beta.0 // indirect
 	k8s.io/gengo v0.0.0-20191120174120-e74f70b9b27e // indirect
 	k8s.io/utils v0.0.0-20191218082557-f07c713de883 // indirect
 )
